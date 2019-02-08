@@ -1,0 +1,12 @@
+MATCH (funcionario:Funcionario) 
+RETURN funcionario.Nome AS Nome, funcionario.N_Funcionario AS Número, funcionario.NCC AS NCC, funcionario.Funcao AS Função 
+ORDER BY Nome ASC
+
+MATCH (b:Bilhete)-[:PERTENCE]->(n:Cliente {NISS:13719382712}) RETURN b
+
+MATCH (b:Bilhete)-[:REFERE]->(p:Percurso {Destino:'Porto', Origem:'Braga'}) WHERE b.H_Partida = '2016-03-01 09:00:00' AND b.H_Chegada='2016-03-01 09:30:00'
+MATCH (b)-[:PERTENCE]->(cl:Cliente) WHERE (cl.NISS<>0)
+MATCH (c:Comboio)-[:PERCORRE]->(p)
+MATCH (c)-[:TEM]->(l:Lugar)
+MATCH (l) WHERE ( l.N_Lugar <> b.Num_Lugar) 
+RETURN DISTINCT l.N_Lugar ORDER BY l.N_Lugar

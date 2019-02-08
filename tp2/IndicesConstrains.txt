@@ -1,0 +1,17 @@
+CREATE CONSTRAINT ON (b:Bilhete)
+ASSERT b.Num_B IS UNIQUE;
+
+CREATE CONSTRAINT ON (f:Funcionario)
+ASSERT f.N_Funcionario IS UNIQUE;
+
+CREATE CONSTRAINT ON (c:Comboio)
+ASSERT c.N_Comboio IS UNIQUE;
+
+CREATE CONSTRAINT ON (c:CLiente)
+ASSERT c.NISS IS UNIQUE;
+
+CREATE INDEX ON :Funcionario(Nome);
+CREATE INDEX ON :Cliente(Nome);
+CREATE INDEX ON :Contacto(Contacto);
+CREATE INDEX ON :Lugar(N_Lugar);
+CREATE INDEX ON :Percurso(Destino);

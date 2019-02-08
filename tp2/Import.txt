@@ -1,0 +1,77 @@
+LOAD CSV With Headers From 'file:///Bilhete.csv' AS line
+Create (bilhete:Bilhete {Num_B: TOINT(line.NumB)})
+Set bilhete.Num_Lugar = TOINT(line.NumL),
+    bilhete.Reserva = TOINT(line.Reserva),
+    bilhete.Preco_R=TOFLOAT(line.PrecoR),
+    bilhete.H_Partida=line.HPart,
+    bilhete.H_Chegada=line.HCheg,
+    bilhete.Data=line.Data,
+    bilhete.Preco=TOFLOAT(line.Preco);
+    
+LOAD CSV With Headers From 'file:///Cliente.csv' AS line
+Create (cliente:Cliente {NISS: TOINT(line.NISS)})
+Set cliente.Endereco=line.Endereco,
+    cliente.Cod_Postal=TOINT(line.CodPost),
+    cliente.Nome = line.Nome,
+    cliente.Rua = line.Rua;
+
+LOAD CSV With Headers From 'file:///Comboio.csv' AS line
+Create (comboio:Comboio {N_Comboio: TOINT(line.NComb)});
+
+LOAD CSV With Headers From 'file:///Contacto.csv' AS line
+Create (contacto:Contacto {Contacto: TOINT(line.Contacto)})
+Set contacto.Cliente=TOINT(line.Cliente);
+
+LOAD CSV With Headers From 'file:///Funcionario.csv' AS line
+Create (funcionario:Funcionario {N_Funcionario: TOINT(line.NFunc)})
+Set funcionario.Nome = line.Nome,
+    funcionario.NCC = TOINT(line.NCC),
+    funcionario.Funcao = line.Funcao;
+
+LOAD CSV WITH HEADERS FROM "file:///Percurso.csv" AS line
+CREATE (percurso:Percurso {Origem: line.Origem})
+Set percurso.Destino=line.Destino,
+    percurso.Linha=line.Linha;
+
+LOAD CSV WITH HEADERS FROM "file:///Lugar.csv" AS line
+CREATE (l:Lugar {N_Lugar: TOINT(line.Numero)})
+Set l.Comboio=TOINT(line.Comboio);
+
+Load CSV WITH HEADERS FROM 'file:///Contacto.csv' as line
+MATCH(cliente:Cliente {NISS: TOINT(line.Cliente)})
+MATCH(contacto:Contacto {Contacto: TOINT(line.Contacto)})
+MATCH(contacto:Contacto {Cliente: TOINT(line.Cliente)})
+Create (cliente)-[:IN_CONTACTO]->(contacto);
+
+Load CSV WITH HEADERS FROM 'file:///Bilhete.csv' as line
+MATCH(f:Funcionario {N_Funcionario: TOINT(line.Funcionario)})
+MATCH(bilhete:Bilhete {Num_B: TOINT(line.NumB)})
+Create (f)-[:IMPRIME]->(bilhete);
+
+Load CSV WITH HEADERS FROM 'file:///Bilhete.csv' as line
+MATCH(cliente:Cliente {NISS: TOINT(line.Cliente)})
+MATCH(bilhete:Bilhete {Num_B: TOINT(line.NumB)})
+Create (bilhete)-[:PERTENCE]->(cliente);
+
+Load CSV WITH HEADERS FROM 'file:///Comboio.csv' as line
+MATCH(f:Funcionario {N_Funcionario: TOINT(line.Funcionario)})
+MATCH(c:Comboio {N_Comboio: TOINT(line.NComb)})
+Create (f)-[:GUIA]->(c);
+
+Load CSV WITH HEADERS FROM 'file:///Bilhete.csv' as line
+MATCH(p:Percurso {Origem: line.PerOrigem})
+MATCH(p:Percurso {Destino: line.PerDestino})
+MATCH(b:Bilhete {Num_B: TOINT(line.NumB)})
+Create (b)-[:REFERE]->(p);
+
+Load CSV WITH HEADERS FROM 'file:///PercursoComboio.csv' as line
+MATCH(p:Percurso {Origem: line.Origem})
+MATCH(p:Percurso {Destino: line.Destino})
+MATCH(c:Comboio {N_Comboio: TOINT(line.Comboio)})
+Create (c)-[:PERCORRE]->(p);
+
+Load CSV WITH HEADERS FROM 'file:///Lugar.csv' as line
+MATCH(c:Comboio {N_Comboio: TOINT(line.Comboio)})
+MATCH(l:Lugar {N_Lugar: TOINT(line.Numero)})
+MATCH(l:Lugar {Comboio: TOINT(line.Comboio)})
+Create (c)-[:TEM]->(l);

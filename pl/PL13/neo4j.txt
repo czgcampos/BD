@@ -1,0 +1,12 @@
+3)
+	1) match(m:Movie {title: 'Apollo 13'})<-[ACTED_IN]-(b:Person) return b,m;
+
+	2) match(a:Person)-[ACTED_IN]->(m:movie)with a, count(m) as movie_count where movie_count >=5 return a, movie_count order by movie_count desc
+
+	3) match(a:Person)-[ACTED_IN]->(m:movie)<-[:DIRECTED]-(a) with a, count(m) as movie_count where movie_count >= 1 return a,movie_count order by movie_count desc
+
+4) create (m:Movie {titulo: "O galinheiro de terça feira", tagline: "eles só fazem barulho"}) return m;
+
+create (m:Movie {titulo: "O galinheiro de terça feira 2", tagline: "eles só fazem barulho"}) return m;
+
+5) macth (m:Movie {titulo: "O galinheiro de terça feira 2"}) delete m;
